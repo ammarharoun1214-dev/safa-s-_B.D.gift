@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.B.D My sister❤</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                        }
+                    },
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #fdf4ff; /* fuchsia-50 */
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .font-tajawal { font-family: 'Tajawal', sans-serif; }
+
+        /* تأثيرات الانتقال بين الشاشات */
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        .fade-in {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transition: opacity 1.5s ease 0.5s; /* تأخير بسيط لدخول سلس */
+        }
+        
+        #main-section {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        /* تصميم صور البولارويد */
+        .polaroid {
+            background: #fff;
+            padding: 12px 12px 40px 12px;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            cursor: pointer;
+            width: 260px;
+            height: 320px;
+        }
+        
+        .polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+        
+        .polaroid:hover {
+            transform: scale(1.15) rotate(0deg) !important;
+            z-index: 50 !important;
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* حركات البالونات */
+        @keyframes floatUp {
+            0% { top: 100vh; opacity: 1; }
+            100% { top: -20vh; opacity: 0; }
+        }
+        @keyframes sway {
+            0% { transform: translateX(0) rotate(-5deg); }
+            100% { transform: translateX(30px) rotate(5deg); }
+        }
+        .balloon {
+            position: fixed; /* Fixed to stay on screen */
+            width: 45px;
+            height: 60px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 10px solid currentColor;
+        }
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            width: 1px;
+            height: 40px;
+            background-color: rgba(0,0,0,0.3);
+        }
+
+        /* حاوية الصور المبعثرة */
+        .scattered-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="text-gray-800 selection:bg-purple-300 selection:text-white">
+
+    <section id="countdown-section" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-pink-800 to-rose-900 text-white">
+        
+        <!-- نجوم في الخلفية -->
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-40 pointer-events-none"></div>
+
+        <div class="relative z-10 text-center px-4">
+            <h1 class="text-3xl md:text-5xl font-tajawal font-bold text-gold-400 mb-12 drop-shadow-lg">
+                Time remaining
+            </h1>
+            
+            <!-- مربعات الأرقام -->
+            <div class="flex justify-center gap-4 md:gap-8 flex-row-reverse" dir="ltr">
+                <!-- الأيام -->
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl mb-2">
+                        <span id="days" class="text-3xl md:text-5xl font-bold">00</span>
+                    </div>
+                    <span class="text-sm md:text-lg font-cairo">يوم</span>
+                </div>
+                <!-- الساعات -->
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl mb-2">
+                        <span id="hours" class="text-3xl md:text-5xl font-bold">00</span>
+                    </div>
+                    <span class="text-sm md:text-lg font-cairo">ساعة</span>
+                </div>
+                <!-- الدقائق -->
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl mb-2">
+                        <span id="minutes" class="text-3xl md:text-5xl font-bold">00</span>
+                    </div>
+                    <span class="text-sm md:text-lg font-cairo">دقيقة</span>
+                </div>
+                <!-- الثواني -->
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-xl mb-2">
+                        <span id="seconds" class="text-3xl md:text-5xl font-bold text-pink-300">00</span>
+                    </div>
+                    <span class="text-sm md:text-lg font-cairo">ثانية</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- زرار التخطي الصغير أسفل الشاشة -->
+        <button onclick="revealGift()" class="absolute bottom-8 text-white/30 hover:text-white/80 text-sm font-cairo transition-colors duration-300 underline underline-offset-4 border-none bg-transparent cursor-pointer z-20">
+            تخطي للبروفة (للتجربة)
+        </button>
+    </section>
+
+    <section id="main-section" class="min-h-screen bg-gradient-to-br from-pink-50 via-fuchsia-100 to-purple-100">
+        
+        <!-- حاوية البالونات -->
+        <div id="balloons-container" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+        <!-- الهيدر والرسالة -->
+        <div class="relative z-10 pt-20 pb-10 px-4 max-w-5xl mx-auto text-center">
+            
+            <div class="inline-block mb-6 p-4 bg-white/60 backdrop-blur-md rounded-full shadow-lg text-pink-500 animate-bounce">
+                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+
+            <!-- الرسالة المخصصة -->
+            <div class="bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-2xl p-8 md:p-12 border-2 border-white">
+                <p class="text-2xl md:text-4xl leading-relaxed text-purple-900 font-bold font-tajawal">
+                    كل سنة وانتي طيبه ي صفصوفتي يا احلا واغلى واحن اخت ف الدنيا واحلا حد جابتهولي الدنيا ربنا يخليكي ليا يارب وميحرمنيش منك ابدا ياقلبي ويوفقك فدراستك وينجحك ويرزقك عشان تجيبلي هدايا وافضل اقرف فيكي وتقرفي فيا ويطول ف عمري وعمرك يارب والله محدش ف الدنيا هيعرف انا بحب اختي قد اي عشان صدقيني م سهل اتكلم عنه او اقوله احسن حد اتكلم معاه واقوله اسراري وبيحفظ اسراري كلها ولو اتخنقت م الدنيا كلها ومعنديش حد اكلمه بتبقي انتي الوحيده اللي بتسمعيني وبتنصحيني عشان اعدي كل حاجه واي حاجه وبتدعميني نفسيا وبتبعتيلي ريلز بتضحك ويعني بجد بتبسط جدا كل شويه بسببك وبوجودك ف حياتي وان شاء الله ندوم لبعض ونبطل خناق ومعلش بقا اعتبري دي الهديه عشان مفلس اليومين دول للاسف 😂 بس وعد ان شاء الله السنه الحايه بإذن الله يعني لو عيشت هعملك حاجه تتفاجئي منها يعني وهتبقي فخوره اكتر ان عندك اخ زيي كل سنه وانتي طيبه يا اختي بحبك وربنا يخليكي ليا يارب 
+                    <br><br>
+                    <span class="text-3xl md:text-5xl text-pink-600 font-extrabold block mt-2">H.B.D MY SIS😍❤</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="relative z-10 w-full overflow-hidden pb-32">
+            <div id="gallery" class="scattered-gallery">
+                <!-- الصور سيتم إضافتها عبر الجافاسكريبت هنا لتطبيق اللخبطة العشوائية -->
+            </div>
+        </div>
+
+        <footer class="relative z-10 bg-gradient-to-r from-purple-200 via-pink-200 to-gold-200 py-10 text-center shadow-inner">
+            <p class="text-2xl md:text-3xl text-purple-900 font-bold font-tajawal drop-shadow-sm">
+                كل سنه وانتي طيبه يا صفا Happy birth day safa 🎂🎉🎈
+            </p>
+        </footer>
+
+    </section>
+
+    <script>
+        // --- 1. إعداد العداد التنازلي ---
+        // تحديد موعد عيد الميلاد: 8 أكتوبر 2026 الساعة 00:00:00
+        const countDownDate = new Date("October 8, 2026 00:00:00").getTime();
+        let timerInterval;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+
+            if (distance <= 0) {
+                // الوقت انتهى
+                clearInterval(timerInterval);
+                document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+                
+                // الانتقال التلقائي
+                setTimeout(revealGift, 1000); 
+                return;
+            }
+
+            // حساب الأيام والساعات والدقائق والثواني
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // عرض النتائج
+            document.getElementById("days").innerText = days < 10 ? '0' + days : days;
+            document.getElementById("hours").innerText = hours < 10 ? '0' + hours : hours;
+            document.getElementById("minutes").innerText = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById("seconds").innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        // تشغيل العداد كل ثانية
+        timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // تشغيل فوري أول مرة
+
+
+        // --- 2. إظهار الهدية (البروفة أو عند انتهاء الوقت) ---
+        function revealGift() {
+            // إيقاف العداد لو شغال
+            clearInterval(timerInterval);
+            
+            const countdownSec = document.getElementById('countdown-section');
+            const mainSec = document.getElementById('main-section');
+            
+            // إضافة تأثير الاختفاء للعداد
+            countdownSec.classList.add('fade-out');
+            
+            // إظهار القسم الأساسي بعد ثانية
+            setTimeout(() => {
+                countdownSec.style.display = 'none';
+                mainSec.style.position = 'relative'; // إرجاع التموضع للطبيعي
+                mainSec.classList.add('fade-in');
+                
+                // تشغيل البالونات
+                createBalloons();
+                // توزيع الصور
+                initGallery();
+            }, 800);
+        }
+
+        // --- 3. حركة البالونات ---
+        function createBalloons() {
+            const container = document.getElementById('balloons-container');
+            const colors = ['#f472b6', '#c084fc', '#fbbf24', '#e879f9', '#fbcfe8', '#ef4444']; 
+            
+            // إنشاء 35 بالونة
+            for (let i = 0; i < 35; i++) {
+                let balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                
+                // لون عشوائي
+                balloon.style.color = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.backgroundColor = 'currentColor';
+                
+                // مكان عشوائي
+                balloon.style.left = Math.random() * 100 + 'vw';
+                
+                // سرعة وتأخير
+                let duration = Math.random() * 6 + 6; // بين 6 و 12 ثانية
+                let delay = Math.random() * 5;
+                
+                // تطبيق الأنيميشن (طلوع لأعلى + تمايل يمين ويسار)
+                balloon.style.animation = `floatUp ${duration}s linear ${delay}s infinite, sway ${Math.random() * 2 + 2}s ease-in-out infinite alternate`;
+                
+                // حجم عشوائي
+                let scale = Math.random() * 0.7 + 0.5; 
+                balloon.style.transform = `scale(${scale})`;
+                
+                container.appendChild(balloon);
+            }
+        }
+
+        // --- 4. ترتيب معرض الصور (تأثير البولارويد العشوائي) ---
+       function initGallery() {
+        const gallery = document.getElementById('gallery');
+        gallery.innerHTML = ''; // تفريغ المعرض
+
+        // دي أسماء صور صفا الحقيقية اللي إنت بعتها
+        const imageFiles = [
+            'DSC_1372.jpg',
+            'DSC00119.jpg',
+            'DSC00136.jpg',
+            'DSC00512.jpg',
+            'Image(624).jpg',
+            'Image(871).jpg',
+            'WhatsApp Image 2026-09-20 at 6.14.56 PM (1).jpeg',
+            'WhatsApp Image 2026-09-20 at 6.15.01 PM (1).jpeg',
+            'WhatsApp Image 2026-09-20 at 6.15.01 PM (2).jpeg',
+            'WhatsApp Image 2026-09-20 at 6.15.01 PM (3).jpeg'
+        ];
+
+        imageFiles.forEach((file, index) => {
+            const polaroid = document.createElement('div');
+            polaroid.className = 'polaroid group';
+
+            const img = document.createElement('img');
+            img.src = file; 
+
+            // لو الصورة مش موجودة هيعرض صورة ملونة مؤقتة
+            img.onerror = function() {
+                const bgColors = ['fce7f3', 'fae8ff', 'fef3c7', 'fdf4ff'];
+                const textColors = ['db2777', '9333ea', 'd97706', 'c026d3'];
+                const randIdx = index % 4;
+                this.src = `https://placehold.co/400x500/${bgColors[randIdx]}/${textColors[randIdx]}?text=صورة+صفا+${index + 1}`;
+                this.onerror = null; 
+            };
+            img.alt = `صورة صفا ${index + 1}`;
+            
+            polaroid.appendChild(img);
+
+            // حسابات العشوائية للدرجة والميل
+            const randomRotation = (Math.random() * 50) - 25; 
+            const randomX = (Math.random() * 40) - 20;
+            const randomY = (Math.random() * 40) - 20;
+            const randomZ = Math.floor(Math.random() * 20);
+            
+            polaroid.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotation}deg)`;
+            polaroid.style.zIndex = randomZ;
+            
+            gallery.appendChild(polaroid);
+        });
+    }
+    
+    </script>
+</body>
+</html>
